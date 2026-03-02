@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git ca-certificates wget curl bzip2 \
     build-essential cmake ninja-build \
     libgl1 libglib2.0-0 \
+    openssh-server \
     && rm -rf /var/lib/apt/lists/*
 
 # Miniforge（稳定链接）
@@ -51,3 +52,15 @@ ENV PATH=/opt/conda/envs/gaussian_splatting/bin:$PATH
 
 # 构建期自检
 RUN python -c "import torch, safetensors; print('torch', torch.__version__, 'cuda', torch.version.cuda, 'safetensors', safetensors.__version__)"
+
+# SSH 基本配置：仅允许 key 登录
+RUN mkdir -p /var/run/sshd && \
+    printf "PermitRootLogin prohibit-password\nPasswordAuthentication no\nPubkeyAuthentication yes\n" \
+      > /etc/ssh/sshd_config.d/runpod.conf
+
+EXPOSE 22
+
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
+CMD ["/start.sh"]
