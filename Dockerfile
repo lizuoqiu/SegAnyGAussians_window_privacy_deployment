@@ -12,10 +12,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Miniforge（稳定链接）
-RUN curl -fsSL --retry 5 --retry-all-errors \
-    -o /tmp/miniforge.sh "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh" && \
-    bash /tmp/miniforge.sh -b -p $CONDA_DIR && \
-    rm /tmp/miniforge.sh && \
+RUN curl -fsS --retry 5 --retry-delay 2 --retry-connrefused \
+    -o /tmp/miniconda.sh "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh" && \
+    bash /tmp/miniconda.sh -b -p $CONDA_DIR && \
+    rm /tmp/miniconda.sh && \
     conda config --set channel_priority strict
 
 # 关键：把 .gitmodules 里的 git@github.com: 改成 https://github.com/
