@@ -11,8 +11,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgl1 libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
-# Miniconda (py37) - 你的环境文件里是 python=3.7.13
-RUN wget -q https://repo.anaconda.com/miniconda/Miniconda3-py37_23.3.1-0-Linux-x86_64.sh -O /tmp/miniconda.sh && \
+RUN curl -fsSL --retry 5 --retry-all-errors \
+    -o /tmp/miniconda.sh "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh" && \
     bash /tmp/miniconda.sh -b -p $CONDA_DIR && \
     rm /tmp/miniconda.sh && \
     conda config --set channel_priority strict
