@@ -17,14 +17,9 @@ RUN curl -fsS --retry 5 --retry-delay 2 --retry-connrefused \
     -o /tmp/miniconda.sh "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh" && \
     bash /tmp/miniconda.sh -b -p $CONDA_DIR && \
     rm /tmp/miniconda.sh && \
-# 关键：把 .gitmodules 里的 git@github.com: 改成 https://github.com/
+    conda config --set channel_priority flexible
 
 
-# 1) 不用 strict（否则 python=3.7 会被 conda-forge 的 python 名称“压住”）
-RUN conda config --set channel_priority flexible
-
-# 2) 自动接受 ToS（CI 必须）
-ENV CONDA_PLUGINS_AUTO_ACCEPT_TOS=yes
 RUN conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main && \
     conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
 
