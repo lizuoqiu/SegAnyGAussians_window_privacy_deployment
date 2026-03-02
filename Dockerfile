@@ -3,7 +3,8 @@ FROM nvidia/cuda:11.6.2-cudnn8-devel-ubuntu20.04
 ENV DEBIAN_FRONTEND=noninteractive \
     CONDA_DIR=/opt/conda \
     PATH=/opt/conda/bin:$PATH \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    CONDA_PLUGINS_AUTO_ACCEPT_TOS=yes
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git ca-certificates wget curl bzip2 \
