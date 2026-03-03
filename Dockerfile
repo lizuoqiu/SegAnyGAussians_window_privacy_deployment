@@ -1,9 +1,14 @@
 FROM nvidia/cuda:11.6.2-cudnn8-devel-ubuntu20.04
 
+EXPOSE 22 8888
+
 ENV DEBIAN_FRONTEND=noninteractive \
     CONDA_DIR=/opt/conda \
     PATH=/opt/conda/bin:$PATH \
     PYTHONUNBUFFERED=1 \
+    JUPYTER_PORT=8888 \
+    JUPYTER_ROOT=/workspace \
+    JUPYTER_TOKEN=runpod \
     CONDA_PLUGINS_AUTO_ACCEPT_TOS=yes
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -47,6 +52,14 @@ RUN conda env create -f environment.yml && conda clean -a -y
 # 保险起见：再锁一次你要的 safetensors
 RUN conda run -n gaussian_splatting pip install --no-cache-dir safetensors==0.4.2
 
+# 安装 JupyterLab（用 conda-forge 确保兼容 python=3.7）
+RUN conda install -n gaussian_splatting -c conda-forge -y jupyterlab ipykernel && \
+    conda clean -a -y
+
+# 把 kernelspec 安装到该环境内（推荐）
+RUN conda run -n gaussian_splatting python -m ipykernel install --sys-prefix \
+    --name gaussian_splatting --display-name "gaussian_splatting"
+
 ENV CONDA_DEFAULT_ENV=gaussian_splatting
 ENV PATH=/opt/conda/envs/gaussian_splatting/bin:$PATH
 
@@ -58,7 +71,6 @@ RUN mkdir -p /var/run/sshd && \
     printf "PermitRootLogin prohibit-password\nPasswordAuthentication no\nPubkeyAuthentication yes\n" \
       > /etc/ssh/sshd_config.d/runpod.conf
 
-EXPOSE 22
 
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
