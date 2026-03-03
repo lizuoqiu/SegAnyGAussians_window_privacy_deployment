@@ -13,16 +13,18 @@ REPO_URL="${REPO_URL:-https://github.com/lizuoqiu/SegAnyGAussians_window_privacy
 REPO_REF="${REPO_REF:-v2}"
 
 mkdir -p /workspace
-if [ ! -d "/workspace/src/.git" ]; then
+cd /workspace
+
+if [ ! -d "src/.git" ]; then
   echo "[start] Cloning repo into /workspace/src ..."
-  rm -rf /workspace/src
-  git clone --recurse-submodules "$REPO_URL" /workspace/src
-  cd /workspace/src
+  rm -rf src
+  git clone --recurse-submodules "$REPO_URL" src || { echo "[start] git clone failed"; sleep infinity; }
+  cd src
   git checkout "$REPO_REF"
   git submodule update --init --recursive
 else
   echo "[start] Repo already exists at /workspace/src (skip clone)."
-  cd /workspace/src
+  cd src
 fi
 
 # =========（可选）在 A100 上编译/安装 CUDA 扩展（只跑一次）=========
