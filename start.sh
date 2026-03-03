@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
-
+cd / || exit 1
 # ========= SSH（RunPod 会注入你的公钥到 authorized_keys） =========
 mkdir -p /root/.ssh
 chmod 700 /root/.ssh
